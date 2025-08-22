@@ -1,0 +1,21 @@
+# Variables
+@baseUrl = http://192.168.0.158:3001
+
+### 
+#Health
+GET {{baseUrl}}/health
+
+###
+GET {{baseUrl}}/users
+
+
+###
+#Auth
+
+POST {{baseUrl}}/auth
+apikey: B3fP5RKq1s9ATQbwxOr8jtraPDNMJeMFnh0ddau2TLrrpqHSyZmD8IwISE4XtxXUUcd0ozLYWHsXazu2jFycSxNT0swjwZsYUQ2ph2h4Vh9ENNq6dv3N23KL6ABymEHn
+Content-Type: application/json
+
+{
+  "phoneNumber": "5555123456789"
+}
