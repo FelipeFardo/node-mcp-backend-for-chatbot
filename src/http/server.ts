@@ -109,7 +109,6 @@ await app.register(fastifySwagger, {
 				url: `https://node-api-mcp-chatbot.onrender.com`,
 				description: "Produção",
 			},
-			{ url: `http://localhost:${env.PORT}`, description: "Local (localhost)" },
 		],
 		tags: [
 			{ name: "Health", description: "Health check e monitoramento" },

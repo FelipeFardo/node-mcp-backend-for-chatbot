@@ -14,7 +14,10 @@
     "db:generate": "drizzle-kit generate",
     "db:seed": "npm run env:load tsx src/db/seed.ts",
     "build": "tsup",
-    "start": "node dist/http/server.js"
+    "start": "node dist/http/server.js",
+    "format": "biome format --write src",
+    "lint": "biome lint --write src",
+    "check": "biome check src"
   },
   "keywords": [],
   "author": "",
