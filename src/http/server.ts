@@ -45,7 +45,13 @@ await app.register(fastifySwagger, {
 					tags: ["MCP"],
 					summary: "Executa ferramentas MCP",
 					description:
-						"Endpoint para executar tools MCP como search_users, search_user_info, search_debts.",
+						"Este endpoint permite a execução de ferramentas MCP, como <b>search_users</b>, <b>search_user_info</b> e <b>search_debts</b>, para consulta e análise de dados de usuários e dívidas.<br><br>" +
+						"Utilize este endpoint para integrar funcionalidades MCP ao seu fluxo de chatbot, automatizando buscas e retornos de informações relevantes.<br><br>" +
+						"<ul>" +
+						"<li>O MCP Inspector recomenda validar cuidadosamente os parâmetros enviados em <b>tool</b> e <b>input</b>, garantindo que estejam de acordo com o esperado por cada ferramenta.</li>" +
+						"<li>Em caso de dúvidas sobre o formato dos dados ou sobre o funcionamento das ferramentas MCP, consulte a documentação oficial ou utilize o MCP Inspector para simular requisições e analisar respostas.</li>" +
+						"<li>Para acessar as ferramentas, é obrigatório enviar o token JWT no formato Bearer no cabeçalho <b>Authorization</b> (bearerAuth).</li>" +
+						"</ul>",
 					security: [{ bearerAuth: [] }],
 					requestBody: {
 						content: {
@@ -60,8 +66,13 @@ await app.register(fastifySwagger, {
 												"search_user_info",
 												"search_debts",
 											],
+											description: "Nome da ferramenta MCP a ser executada.",
 										},
-										input: { type: "object" },
+										input: {
+											type: "object",
+											description:
+												"Parâmetros específicos exigidos pela ferramenta selecionada.",
+										},
 									},
 									required: ["tool", "input"],
 								},
@@ -70,7 +81,8 @@ await app.register(fastifySwagger, {
 					},
 					responses: {
 						200: {
-							description: "Resultado da execução da tool MCP",
+							description:
+								"Resultado da execução da ferramenta MCP, retornando um array de objetos com os dados solicitados.",
 							content: {
 								"application/json": {
 									schema: {
@@ -93,7 +105,7 @@ await app.register(fastifySwagger, {
 			version: "1.0.0",
 			contact: {
 				name: "Felipe Fardo",
-				url: "https://github.com/FelipeFardo/Node-Api-Mcp-Chatbot",
+				url: "https://github.com/FelipeFardo/Node-MCP-Backend-for-Chatbot",
 			},
 			license: {
 				name: "MIT",
@@ -102,7 +114,7 @@ await app.register(fastifySwagger, {
 		},
 		externalDocs: {
 			description: "Leia o README do projeto",
-			url: "https://github.com/FelipeFardo/Node-Api-Mcp-Chatbot",
+			url: "https://github.com/FelipeFardo/Node-MCP-Backend-for-Chatbot",
 		},
 		servers: [
 			{
@@ -150,6 +162,7 @@ app.register(fastifyJwt, {
 app.register(authenticate);
 app.register(getProfile);
 app.register(health);
+
 app.listen({ port: env.PORT, host: "0.0.0.0" }).then(() => {
 	console.log("Running in port", env.PORT);
 });
