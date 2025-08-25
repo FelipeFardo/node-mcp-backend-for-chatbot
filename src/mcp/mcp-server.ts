@@ -1,12 +1,44 @@
+import { UnauthorizedError } from "@modelcontextprotocol/sdk/client/auth.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../db/connection.ts";
 
 const mcpserver = new McpServer({
-	name: "demo-server",
+	name: "Chatbot-mcp",
 	version: "1.0.0",
+	title: "Chatbot MCP",
 });
+
+mcpserver.registerResource(
+	"debts",
+	"debts://me",
+	{
+		list: undefined,
+		title: "Busca dívidas do usuário",
+		description: `Você deve usar esta tool quando o usuário pedir para consultar as dívidas de uma pessoa.
+				Ela retorna uma lista de dívidas registradas no sistema.
+				Se não houver dívidas, retorna uma lista vazia.`,
+	},
+	async (_uri, { authInfo }) => {
+		if (!authInfo) {
+			throw new UnauthorizedError("Invalid auth token");
+		}
+
+		const debts = await db.query.debts.findMany({
+			where(fields) {
+				return eq(fields.userId, authInfo.clientId);
+			},
+		});
+
+		return {
+			contents: debts.map((debt) => ({
+				uri: `debts://me/${debt.id}`,
+				text: JSON.stringify(debt),
+			})),
+		};
+	},
+);
 
 mcpserver.registerTool(
 	"search_users",
@@ -35,6 +67,7 @@ mcpserver.registerTool(
 		title: "Busca informações do usuário autenticado",
 	},
 	async ({ authInfo }) => {
+		console.log(authInfo.clientId);
 		const user = await db.query.users.findFirst({
 			where(fields) {
 				return eq(fields.id, authInfo.clientId);
@@ -42,27 +75,6 @@ mcpserver.registerTool(
 		});
 		return {
 			content: [{ type: "text", text: JSON.stringify(user) }],
-		};
-	},
-);
-
-mcpserver.registerTool(
-	"search_debts",
-	{
-		title: "Busca dívidas do usuário",
-		description: `
-			Você deve usar esta tool quando o usuário pedir para consultar as dívidas de uma pessoa.
-			Ela retorna uma lista de dívidas registradas no sistema.
-			Se não houver dívidas, retorna uma lista vazia.`,
-	},
-	async ({ authInfo }) => {
-		const debts = await db.query.debts.findFirst({
-			where(fields) {
-				return eq(fields.userId, authInfo.clientId);
-			},
-		});
-		return {
-			content: [{ type: "text", text: JSON.stringify(debts) }],
 		};
 	},
 );

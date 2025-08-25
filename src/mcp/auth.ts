@@ -24,7 +24,7 @@ const myVerifier: OAuthTokenVerifier = {
 			return {
 				token,
 				clientId: payload.sub,
-				scopes: ["read", "write"],
+				scopes: [],
 			};
 		} catch (_error) {
 			throw new UnauthorizedClientError("Unauthorized");
