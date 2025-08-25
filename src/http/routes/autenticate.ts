@@ -14,18 +14,72 @@ export async function authenticate(app: FastifyInstance) {
 			"/auth",
 			{
 				schema: {
-					summary: "Autenticação por telefone",
-					description:
-						"Recebe o número de telefone do usuário e retorna um JWT para autenticação nas demais rotas.",
+					summary: "🔐 Autenticação por Telefone + API Key",
+					description: `
+**Autenticação do Sistema de Chatbot**
+
+Este endpoint autentica usuários através do número de telefone e retorna um token JWT.
+
+**Processo:**
+1. Envie API Key no header \`apiKey\`
+2. Forneça o número de telefone no body
+3. Receba um token JWT válido
+4. Use o JWT em todas as outras rotas protegidas
+
+**Segurança:**
+- API Key obrigatória para acesso
+- Telefone deve estar cadastrado no sistema
+- JWT expira conforme configuração do servidor
+
+**Exemplo de uso:**
+\`\`\`
+Headers: { "apiKey": "sua-api-key-aqui" }
+Body: { "phoneNumber": "+5511999999999" }
+\`\`\`
+					`.trim(),
 					tags: ["Auth"],
 					security: [{ apiKey: [] }],
-					body: z.object({
-						phoneNumber: z.string(),
-					}),
+					body: z
+						.object({
+							phoneNumber: z
+								.string()
+								.min(10, "Telefone deve ter pelo menos 10 dígitos")
+								.max(15, "Telefone deve ter no máximo 15 dígitos")
+								.describe(
+									"Número de telefone do usuário (com ou sem código do país)",
+								),
+						})
+						.describe("Dados para autenticação"),
 					response: {
-						201: z.object({
-							token: z.string(),
-						}),
+						201: z
+							.object({
+								token: z
+									.string()
+									.describe(
+										"Token JWT para autenticação nas próximas requisições",
+									),
+								user: z
+									.object({
+										id: z.string().describe("ID único do usuário"),
+										name: z.string().describe("Nome completo do usuário"),
+										phone: z
+											.string()
+											.nullable()
+											.describe("Telefone utilizado na autenticação"),
+									})
+									.describe("Dados básicos do usuário autenticado"),
+							})
+							.describe("Autenticação realizada com sucesso"),
+						400: z
+							.object({
+								message: z.string().describe("Descrição do erro"),
+							})
+							.describe("Erro de validação ou credenciais inválidas"),
+						401: z
+							.object({
+								message: z.string().describe("Descrição do erro"),
+							})
+							.describe("API Key inválida ou ausente"),
 					},
 				},
 			},
@@ -39,6 +93,7 @@ export async function authenticate(app: FastifyInstance) {
 				});
 
 				console.log(user);
+
 				if (!user) {
 					throw new BadRequestError("Invalid credentials.");
 				}
@@ -47,6 +102,11 @@ export async function authenticate(app: FastifyInstance) {
 
 				return {
 					token,
+					user: {
+						id: user.id,
+						name: user.name,
+						phone: user.phone,
+					},
 				};
 			},
 		);

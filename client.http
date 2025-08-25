@@ -1,21 +1,108 @@
+# Node MCP Chatbot API - Test Examples
+# Este arquivo contém exemplos de requisições para testar a API
+
 # Variables
-@baseUrl = http://192.168.0.158:3001
+@baseUrl = http://localhost:3333
+@apiKey = sua_chave_de_api_para_rotas_protegidas
+@jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
-### 
-#Health
+###
+# 1. Health Check - Verifica se o servidor está funcionando
 GET {{baseUrl}}/health
+Content-Type: application/json
 
 ###
-GET {{baseUrl}}/users
-
-
-###
-#Auth
-
+# 2. Authentication - Obter JWT Token
+# Substitua {{@apiKey}} pela sua API Key real
 POST {{baseUrl}}/auth
-apikey: B3fP5RKq1s9ATQbwxOr8jtraPDNMJeMFnh0ddau2TLrrpqHSyZmD8IwISE4XtxXUUcd0ozLYWHsXazu2jFycSxNT0swjwZsYUQ2ph2h4Vh9ENNq6dv3N23KL6ABymEHn
+apiKey: {{@apiKey}}
 Content-Type: application/json
 
 {
   "phoneNumber": "5555123456789"
 }
+
+###
+# 3. Get User Profile - Perfil do usuário autenticado
+# Substitua {{@jwtToken}} pelo token obtido no passo anterior
+GET {{baseUrl}}/me
+Content-Type: application/json
+Authorization: Bearer {{@jwtToken}}
+
+###
+# 4. MCP Tool - Buscar usuários ativos
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Authorization: Bearer {{@jwtToken}}
+
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "search_users",
+    "arguments": {
+      "status": "active"
+    }
+  }
+}
+
+###
+# 5. MCP Tool - Buscar usuários inativos
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Authorization: Bearer {{@jwtToken}}
+
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/call",
+  "params": {
+    "name": "search_users",
+    "arguments": {
+      "status": "inactive"
+    }
+  }
+}
+
+###
+# 6. MCP Tool - Informações do usuário autenticado
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Authorization: Bearer {{@jwtToken}}
+
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "search_user_info",
+    "arguments": {}
+  }
+}
+
+###
+# 7. MCP Resource - Dívidas do usuário autenticado
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Authorization: Bearer {{@jwtToken}}
+
+{
+  "jsonrpc": "2.0",
+  "id": 4,
+  "method": "resources/read",
+  "params": {
+    "uri": "debts://me"
+  }
+}
+
+###
+# Documentação Interativa
+# Acesse: http://localhost:3333/docs
+
+###
+# Teste com MCP Inspector
+# 1. Execute: npm run mcp
+# 2. Conecte em: http://localhost:3333/mcp
+# 3. Adicione header: Authorization: Bearer <seu_jwt_token>
+# 4. Teste as tools e resources acima

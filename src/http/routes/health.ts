@@ -7,17 +7,38 @@ export async function health(app: FastifyInstance) {
 		"/health",
 		{
 			schema: {
-				summary: "Health check",
-				description:
-					"Endpoint simples para verificar se o servidor está de pé.",
+				summary: "🩺 Health Check do Sistema",
+				description: `
+**Verificação de Saúde do Servidor**
+
+Endpoint simples para verificar se o servidor está funcionando corretamente.
+
+**Uso típico:**
+- Monitoramento de infraestrutura
+- Load balancers
+- Health checks automáticos
+- Verificação rápida de disponibilidade
+
+**Retorna:** Status "OK" se o servidor estiver funcionando.
+				`.trim(),
 				tags: ["Health"],
 				response: {
-					200: z.string(),
+					200: z
+						.object({
+							status: z.string().describe("Status do servidor"),
+							timestamp: z.string().describe("Timestamp da verificação"),
+							uptime: z.number().describe("Tempo de atividade em segundos"),
+						})
+						.describe("Resposta de health check bem-sucedida"),
 				},
 			},
 		},
 		() => {
-			return "OK";
+			return {
+				status: "OK",
+				timestamp: new Date().toISOString(),
+				uptime: process.uptime(),
+			};
 		},
 	);
 }

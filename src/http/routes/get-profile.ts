@@ -14,18 +14,59 @@ export async function getProfile(app: FastifyInstance) {
 			"/me",
 			{
 				schema: {
-					summary: "Retorna o perfil do usuário autenticado",
-					description:
-						"Requer um token JWT válido no header Authorization (Bearer).",
+					summary: "👤 Perfil do Usuário Autenticado",
+					description: `
+**Obtém Informações do Usuário Logado**
+
+Retorna os dados do usuário atual baseado no token JWT fornecido.
+
+**Autenticação:**
+- Header obrigatório: \`Authorization: Bearer <JWT_TOKEN>\`
+- Token deve ser obtido via POST /auth
+
+**Retorno:**
+- Dados básicos do usuário autenticado
+- ID único para identificação
+- Primeiro nome para personalização
+
+**Casos de uso:**
+- Exibir informações do usuário em interfaces
+- Validar identidade para operações sensíveis
+- Personalizar experiência do chatbot
+					`.trim(),
 					tags: ["Users"],
 					security: [{ bearerAuth: [] }],
 					response: {
-						200: z.object({
-							user: z.object({
-								id: z.string(),
-								firstName: z.string(),
-							}),
-						}),
+						200: z
+							.object({
+								user: z
+									.object({
+										id: z.string().describe("ID único do usuário no sistema"),
+										firstName: z.string().describe("Primeiro nome do usuário"),
+										fullName: z.string().describe("Nome completo do usuário"),
+										phone: z
+											.string()
+											.nullable()
+											.describe("Telefone cadastrado do usuário"),
+										createdAt: z.string().describe("Data de criação da conta"),
+									})
+									.describe("Dados completos do usuário"),
+							})
+							.describe("Perfil do usuário obtido com sucesso"),
+						401: z
+							.object({
+								error: z.string().describe("Tipo do erro"),
+								message: z.string().describe("Descrição do erro"),
+								statusCode: z.number().describe("Código HTTP do erro"),
+							})
+							.describe("Token JWT inválido ou ausente"),
+						404: z
+							.object({
+								error: z.string().describe("Tipo do erro"),
+								message: z.string().describe("Descrição do erro"),
+								statusCode: z.number().describe("Código HTTP do erro"),
+							})
+							.describe("Usuário não encontrado"),
 					},
 				},
 			},
@@ -44,6 +85,10 @@ export async function getProfile(app: FastifyInstance) {
 				const user = {
 					id: userById.id,
 					firstName: userById.name.split(" ")[0],
+					fullName: userById.name,
+					phone: userById.phone,
+					createdAt:
+						userById.createdAt?.toISOString() || new Date().toISOString(),
 				};
 
 				return { user };
