@@ -102,11 +102,22 @@ Base URL: `http://localhost:3333`
 - `POST /mcp` — Endpoint do servidor MCP (usar o mesmo JWT como Bearer)
 - `GET /docs` — Documentação (Swagger + Scalar)
 
+
+
 ## 🧭 MCP Tools
 
 - `search_users` — Lista usuários por `status` (`active` | `inactive`).
 - `search_user_info` — Retorna dados do usuário autenticado.
-- `search_debts` — Retorna dívidas do usuário autenticado.
+
+## 🗄️ MCP Resources
+
+- `debts://me` — Retorna dívidas do usuário autenticado.
+
+### Sobre o endpoint `/mcp`
+
+O endpoint `/mcp` expõe as ferramentas (tools) e recursos (resources) do servidor MCP. Ele aceita requisições POST, normalmente com JWT válido no header `Authorization`. O payload segue o padrão do Model Context Protocol, permitindo que clientes (como o MCP Inspector ou bots) consultem e executem as tools/resources registradas no backend.
+
+Exemplo de uso: buscar usuários, consultar informações do usuário autenticado ou listar dívidas do usuário.
 
 Use `npm run mcp` para abrir o inspector e conectar em `http://localhost:3333/mcp` com `Authorization: Bearer <JWT>`.
 
