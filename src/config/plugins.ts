@@ -1,8 +1,10 @@
-import type { FastifyInstance } from "fastify";
 import fastifyCors from "@fastify/cors";
 import fastifyJwt from "@fastify/jwt";
-import fastifySwagger from "@fastify/swagger";
+import fastifySwagger, {
+	type FastifyDynamicSwaggerOptions,
+} from "@fastify/swagger";
 import scalarDocs from "@scalar/fastify-api-reference";
+import type { FastifyInstance } from "fastify";
 import FastifyMcpServer from "fastify-mcp-server";
 import {
 	serializerCompiler,
@@ -34,11 +36,17 @@ export async function registerPlugins(app: FastifyInstance) {
 	app.setSerializerCompiler(serializerCompiler);
 
 	// Swagger
-	await app.register(fastifySwagger, swaggerConfig as any);
+	await app.register(
+		fastifySwagger,
+		swaggerConfig as FastifyDynamicSwaggerOptions,
+	);
 
 	// Scalar Docs
 	await app.register(scalarDocs, {
 		routePrefix: "/docs",
+		configuration: {
+			pageTitle: "Node MCP Chatbot API",
+		},
 	});
 
 	// JWT

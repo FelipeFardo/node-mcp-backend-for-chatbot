@@ -1,3 +1,4 @@
+import type { FastifyDynamicSwaggerOptions } from "@fastify/swagger";
 import { jsonSchemaTransform } from "fastify-type-provider-zod";
 import { env } from "../env.ts";
 import { mcpOpenApiPaths } from "./mcp-docs.ts";
@@ -91,4 +92,4 @@ API completa construída com Fastify, JWT, PostgreSQL e integração MCP para ch
 		},
 	},
 	transform: jsonSchemaTransform,
-};
+} as FastifyDynamicSwaggerOptions;
