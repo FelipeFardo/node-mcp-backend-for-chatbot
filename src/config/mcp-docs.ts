@@ -2,16 +2,16 @@ export const mcpOpenApiPaths = {
 	"/mcp": {
 		post: {
 			tags: ["MCP"],
-			summary: "🤖 Model Context Protocol - Endpoint para Tools e Resources",
+			summary: "🤖 Model Context Protocol - Endpoint para Tools",
 			description: `
 **🚀 Model Context Protocol (MCP) - JSON-RPC 2.0 Endpoint**
 
-Este endpoint implementa o protocolo MCP para executar tools e acessar resources de forma padronizada.
+Este endpoint implementa o protocolo MCP para executar tools de forma padronizada.
 
 **📋 Protocolo JSON-RPC 2.0:**
 - Todas as requisições seguem o padrão JSON-RPC 2.0
 - Autenticação obrigatória via JWT Bearer Token
-- Suporte completo para tools e resources
+- Suporte completo para tools
 
 ---
 
@@ -99,7 +99,7 @@ Todas as respostas seguem o padrão JSON-RPC 2.0:
 
 **O que é o MCP Inspector?**
 - Interface gráfica para testar e debugar servidores MCP
-- Permite explorar tools e resources interativamente
+- Permite explorar tools interativamente
 - Ideal para desenvolvimento e debugging
 
 **🚀 Como usar:**
@@ -114,9 +114,7 @@ npm run mcp
 **⚡ DICAS DE INTEGRAÇÃO**
 
 1. **Para Chatbots:** Use tools para buscar dados dinâmicos
-2. **Para Resources:** Acesse dados específicos via URI
-3. **Tratamento de Erro:** Sempre verifique o campo "error" na resposta
-4. **Performance:** Resources são mais rápidas que tools para dados estáticos
+2. **Tratamento de Erro:** Sempre verifique o campo "error" na resposta
 			`,
 			security: [{ bearerAuth: [] }],
 			parameters: [
@@ -150,9 +148,8 @@ npm run mcp
 								},
 								method: {
 									type: "string",
-									enum: ["tools/call", "resources/read"],
-									description:
-										"Método MCP: 'tools/call' para executar tools, 'resources/read' para acessar resources",
+									enum: ["tools/call"],
+									description: "Método MCP: 'tools/call' para executar tools",
 								},
 								params: {
 									type: "object",
@@ -182,7 +179,7 @@ npm run mcp
 							initialize: {
 								summary: "🔄 Inicializar Sessão MCP",
 								description:
-									"Estabelece handshake obrigatório entre cliente e servidor, negociando capacidades e versão do protocolo antes de executar tools/resources.",
+									"Estabelece handshake obrigatório entre cliente e servidor, negociando capacidades e versão do protocolo antes de executar tools.",
 								value: {
 									method: "initialize",
 									params: {
