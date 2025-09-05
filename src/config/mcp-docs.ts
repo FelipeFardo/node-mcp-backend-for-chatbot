@@ -30,13 +30,6 @@ Este endpoint implementa o protocolo MCP para executar tools e acessar resources
 
 ---
 
-**📁 RESOURCES DISPONÍVEIS**
-
-**1. debts://me**
-- **Descrição:** Lista todas as dívidas do usuário autenticado
-- **URI:** "debts://me"
-- **Uso:** Consultar dívidas para negociação
-
 ---
 
 **💡 EXEMPLOS DE USO**
@@ -56,16 +49,6 @@ POST /mcp
 }
 \`\`\`
 
-**Consultar Dívidas:**
-\`\`\`json
-POST /mcp
-{
-  "jsonrpc": "2.0", 
-  "id": 2,
-  "method": "resources/read",
-  "params": { "uri": "debts://me" }
-}
-\`\`\`
 
 **Informações do Usuário:**
 \`\`\`json
@@ -190,17 +173,6 @@ npm run mcp
 											},
 											required: ["name", "arguments"],
 										},
-										{
-											title: "Resources Parameters",
-											properties: {
-												uri: {
-													type: "string",
-													enum: ["debts://me"],
-													description: "URI do resource a ser acessado",
-												},
-											},
-											required: ["uri"],
-										},
 									],
 								},
 							},
@@ -268,16 +240,6 @@ npm run mcp
 										name: "search_user_info",
 										arguments: {},
 									},
-								},
-							},
-							get_user_debts: {
-								summary: "💰 Dívidas do Usuário",
-								description: "Lista todas as dívidas do usuário autenticado",
-								value: {
-									jsonrpc: "2.0",
-									id: 4,
-									method: "resources/read",
-									params: { uri: "debts://me" },
 								},
 							},
 						},
@@ -354,21 +316,6 @@ npm run mcp
 												{
 													type: "text",
 													text: '{"id":"123","name":"João Silva","email":"joao@email.com","status":"active","createdAt":"2024-01-15"}',
-												},
-											],
-										},
-									},
-								},
-								debts_response: {
-									summary: "Resposta - Dívidas do Usuário",
-									value: {
-										jsonrpc: "2.0",
-										id: 4,
-										result: {
-											content: [
-												{
-													type: "text",
-													text: '[{"id":"debt_001","amount":1500.00,"description":"Cartão de Crédito","dueDate":"2024-12-31","status":"pending"},{"id":"debt_002","amount":800.50,"description":"Financiamento","dueDate":"2024-11-15","status":"overdue"}]',
 												},
 											],
 										},
